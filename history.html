@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title>Chronik | DM0IGH, Berlin-Neukölln, Rollberg</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<!-- NeoWX Material skin v1.73.2 -->
+
+<script>
+    window.NX_LIVE_DATA = (function () {
+        try {
+            return fetch('live.json?_=' + Date.now(), { cache: 'no-store' })
+                .then(function (r) {
+                    if (!r.ok) { throw new Error('live.json HTTP ' + r.status); }
+                    return r.json();
+                });
+        } catch (e) { return Promise.reject(e); }
+    })();
+    // No-op handler so an unused/failed pre-warm (e.g. current page with uptime
+    // off) doesn't surface as an unhandled rejection. neowx-live.js attaches its
+    // own then/catch to the same promise independently.
+    window.NX_LIVE_DATA.catch(function () {});
+</script>
+
+<meta name="description" content="">
+<meta name="keywords" content="['weather', 'weewx', 'neowx-material']">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wetter">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="application-name" content="Wetter | DM0IGH, Berlin-Neukölln, Rollberg">
+
+<meta name="application-name" content="Wetter | DM0IGH, Berlin-Neukölln, Rollberg">
+<meta name="msapplication-tooltip" content="DM0IGH, Berlin-Neukölln, Rollberg">
+<meta name="msapplication-starturl" content="/">
+
+<meta name="msapplication-tap-highlight" content="no">
+
+    <meta http-equiv="refresh" content="300">
+
+
+
+<link href="img/icon-16.ico" rel="shortcut icon" type="image/x-icon">
+<link href="img/icon-16.png" rel="icon" type="image/png" sizes="16x16">
+<link href="img/icon-32.png" rel="icon" type="image/png" sizes="32x32">
+<link href="img/icon-48.png" rel="icon" type="image/png" sizes="48x48">
+
+<link href="img/icon-180.png" rel="apple-touch-icon">
+<link href="img/icon-76.png" rel="apple-touch-icon" sizes="76x76">
+<link href="img/icon-120.png" rel="apple-touch-icon" sizes="120x120">
+<link href="img/icon-152.png" rel="apple-touch-icon" sizes="152x152">
+
+<link href="img/icon-192.png" rel="icon" sizes="192x192">
+<link href="img/icon-128.png" rel="icon" sizes="128x128">
+
+<link href="manifest.json" rel="manifest">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+<link rel="stylesheet" href="css/style.min.css?v=1.73.2">
+
+<link rel="stylesheet" href="weather-icons/css/weather-icons.min.css">
+<link rel="stylesheet" href="weather-icons/css/weather-icons-wind.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+
+<link rel="stylesheet" href="js/vendor/apexcharts/apexcharts.css">
+
+<script>
+(function () {
+    // Tells js/app.js the setting is on, so its own DOMContentLoaded handler
+    // knows whether to correct the DOM and bind the writers below - it has no
+    // template access of its own to check Extras.Appearance directly. Set
+    // before the try so it still lands even if storage is unreadable or the
+    // stored blob is malformed and one of the early returns below fires.
+    window.NWM_REMEMBER_PANELS = true;
+    var stored;
+    try { stored = JSON.parse(sessionStorage.getItem('nwm-panels') || '{}'); }
+    catch (e) { return; }
+    if (!stored || typeof stored !== 'object' || Array.isArray(stored)) { return; }
+    var css = '';
+    for (var slug in stored) {
+        if (!Object.prototype.hasOwnProperty.call(stored, slug)) { continue; }
+        if (!/^[A-Za-z0-9_-]+$/.test(slug)) { continue; }
+        var p = '.nwm-expansion-panel[data-section="' + slug + '"]';
+        // Static panels (collapsed = none) have no toggle, so a stale stored
+        // false would hide one with no way to reopen it.  The header is the
+        // body's immediate previous sibling, so + reaches exactly the right
+        // element without relying on the CSS :has selector.
+        var body = p + ' > .nwm-panel-header:not(.nwm-panel-static) + .collapse';
+        // The chevron rotates off [aria-expanded] on the header, which this
+        // override does not change - so without a matching transform the
+        // panel paints with its chevron pointing the wrong way.  This
+        // selector is (0,5,0) against the base rule's (0,3,0); a shorter one
+        // ties and is then decided by source order.
+        var icon = p + ' > .nwm-panel-header[aria-expanded] .nwm-panel-icon';
+        css += stored[slug]
+            ? body + '{display:block}' + icon + '{transform:rotate(180deg)}'
+            : body + '.show{display:none}' + icon + '{transform:none}';
+    }
+    if (css) {
+        var st = document.createElement('style');
+        st.id = 'nwm-panel-restore';
+        st.textContent = css;
+        document.head.appendChild(st);
+    }
+})();
+</script>
+
+
+
+
+
+<style>
+    /* Light mode panel background */
+    .light-theme .nwm-panel-header,
+    .auto-theme .nwm-panel-header {
+        background-color: #eaeaea !important;
+    }
+    /* Dark mode panel background */
+    .dark-theme .nwm-panel-header {
+        background-color: #333333 !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .auto-theme .nwm-panel-header {
+            background-color: #333333 !important;
+        }
+    }
+    /* Light mode panel title */
+    .light-theme .nwm-panel-title,
+    .auto-theme .nwm-panel-title {
+        color: #3F51B5 !important;
+    }
+    /* Dark mode panel title */
+    .dark-theme .nwm-panel-title {
+        color: #3F51B5 !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .auto-theme .nwm-panel-title {
+            color: #3F51B5 !important;
+        }
+    }
+</style>
+
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_1136x640.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+href="img/splash/splash_2436x1125.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_1792x828.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_828x1792.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_1334x750.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+href="img/splash/splash_1242x2688.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+href="img/splash/splash_2208x1242.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+href="img/splash/splash_1125x2436.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+href="img/splash/splash_1242x2208.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_2732x2048.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+href="img/splash/splash_2688x1242.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_2224x1668.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_750x1334.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_2048x2732.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_2388x1668.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_1668x2224.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_640x1136.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_1668x2388.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+href="img/splash/splash_2048x1536.png"
+/>
+<link
+rel="apple-touch-startup-image"
+media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+href="img/splash/splash_1536x2048.png"
+/>
+
+<style>
+    /* Applies hand cursor and smooth transitions to both Value Cards and Graph Cards */
+    .card-value,
+    .card-chart {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+        /* Hover effect for Value Cards and Graph Cards (Lift & Shadow) */
+        .temprow .card:not(.card-forecast):hover,
+        .graphrow .card:not(.card-forecast):hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3) !important;
+            transform: translateY(-3px);
+        }
+
+    /* Prevents "Touch to Search" popups and blue text selection on mobile/desktop */
+    .temprow .card,
+    .graphrow .card,
+    .graphrow .card h3,
+    .graphrow .card .card-title,
+    .seasons-vector-img {
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none;    /* Firefox */
+        -ms-user-select: none;     /* IE/Edge */
+        user-select: none;         /* Standard */
+        -webkit-tap-highlight-color: transparent; /* Removes the gray flash on mobile tap */
+    }
+
+    .nwm-panel-static {
+        cursor: default;
+    }
+
+    /* A static panel (collapsed = none) has no toggle, so it must not
+       hover-highlight as if it were clickable. css/style.css applies
+       .nwm-panel-header:hover plus two dark-mode !important variants; the
+       rules below are more specific and come later, so they win.
+
+       "Cancel the hover" means repaint whatever the header shows when it is
+       NOT hovered, which is not always transparent. In light mode the
+       configured panelColor rule is !important and this one is not, so the
+       configured colour already wins and transparent only applies when
+       nothing is configured. In dark mode both carry !important, so this
+       rule wins on specificity and has to repaint panelColorDark itself -
+       otherwise hovering a static header erases the configured fill. */
+    .nwm-panel-header.nwm-panel-static:hover {
+        background-color: transparent;
+    }
+    .dark-theme .nwm-panel-header.nwm-panel-static:hover {
+        background-color: #333333 !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .auto-theme .nwm-panel-header.nwm-panel-static:hover {
+            background-color: #333333 !important;
+        }
+    }
+</style>
+
+
+
+
+
+    </head>
+    <body class="auto-theme main-bg" ontouchstart="">
+
+
+
+        <script>
+            document.documentElement.classList.add('nx-live-pending');
+            setTimeout(function () {
+                document.documentElement.classList.remove('nx-live-pending');
+            }, 5000);
+        </script>
+        <style>
+            .nx-live-pending #header-date,
+            .nx-live-pending #alm-sun-rise, .nx-live-pending #alm-sun-set,
+            .nx-live-pending #alm-sunrise, .nx-live-pending #alm-sunset,
+            .nx-live-pending #alm-moon-rise, .nx-live-pending #alm-moon-set,
+            .nx-live-pending #alm-moon-icon, .nx-live-pending #alm-moon-fullness,
+            .nx-live-pending #footer-year,
+            .nx-live-pending #footer-weewx-version, .nx-live-pending #footer-skin-version,
+            .nx-live-pending #footer-station-uptime, .nx-live-pending #footer-server-uptime {
+                visibility: hidden;
+            }
+        </style>
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark indigo" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
+
+            <!-- ===== COLUMN 1: Brand / Station Info ===== -->
+            <!-- Fixed height = guarantees logo + station name never move between pages -->
+            <div class="d-flex align-items-center flex-shrink-0 mr-3" style="height: 4.5rem;">
+
+                <!-- Sub-col A: Weather icon / logo (vertically centered within fixed height) -->
+                    <a class="mr-3" href="index.html" style="display:flex; align-items:center; height:100%; flex-shrink:0;">
+                            <img src="img/icon-alpha-1x.png" srcset="img/icon-alpha-1x.png 1x, img/icon-alpha-2x.png 2x" style="width: 4rem">
+                    </a>
+
+                <!-- Sub-col B: flex-column, centered in fixed height so every row is always at the same Y -->
+                <div style="display:flex; flex-direction:column; justify-content:center; height:100%; line-height:1.2;">
+
+                    <!-- Row 1: Station name -->
+                    <div style="font-size:20px; font-weight:700; color:#fff; white-space:nowrap; margin-bottom:0.3rem;">DM0IGH, Berlin-Neukölln, Rollberg</div>
+
+                    <!-- Row 2: Date + icons (icons column always rendered, empty on non-current pages) -->
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                            <!-- Server value is the page's build date (fallback); neowx-live.js overwrites it with today's date from live.json -->
+                            <div id="header-date" style="white-space:nowrap; font-size:0.95rem; color:#fff;">18.09.2026</div>
+                        <!-- Icon container: position:relative so OFFLINE badge can float below without affecting row height -->
+                        <div style="position:relative; display:flex; flex-direction:column; gap:0.1rem;">
+                            <!-- Icons row -->
+                            <div style="display:flex; align-items:center; gap:0.25rem; font-size:1.1rem;">
+                                    <!-- Calendar icon: hidden by default; neowx-live.js reveals it when this
+                                         page's build date (data-generated-date) differs from today. The title
+                                         shows when the page content was generated. -->
+                                    <div id="generated-status" class="text-white" style="display:none;"
+                                         data-generated-ts="1789740391.863646"
+                                         data-old-threshold="1440">
+                                        <span class="mdi mdi-calendar-clock"
+                                              data-toggle="tooltip" data-placement="bottom"
+                                              style="vertical-align:middle;"
+                                              title="18.09.2026 14:06"></span>
+                                    </div>
+                                    <!-- Transparent spacer — keeps icon-column height identical to current page -->
+                                    <span style="font-size:1.1rem; color:transparent;" aria-hidden="true">&#9632;</span>
+                            </div>
+                            <!-- OFFLINE badge: absolutely positioned below icons, left-aligned with MQTT icon.
+                                 position:absolute means it does NOT affect the flex-row height — no layout shift. -->
+                            <span id="status-label"
+                                  style="display:none; position:absolute; top:100%; left:0; margin-top:3px;
+                                         font-size:0.65rem; font-weight:700; line-height:1.4;
+                                         color:#ffffff; background-color:#f44336;
+                                         padding:1px 4px; border-radius:2px; white-space:nowrap;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Time only -->
+                        <div style="white-space:nowrap; font-size:0.95rem; color:transparent;" aria-hidden="true">00:00:00</div>
+                </div>
+
+
+            </div><!-- end column 1 -->
+
+            <!-- Mobile toggle button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- ===== COLUMN 2: Navigation (centered, grows to fill space) ===== -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent" style="flex: 1 1 auto;">
+                <ul class="navbar-nav">
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="index.html">Aktuell</a>
+                        </li>
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="yesterday.html">Gestern</a>
+                        </li>
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="week.html">Woche</a>
+                        </li>
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="month.html">Monat</a>
+                        </li>
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="year.html">Jahr</a>
+                        </li>
+
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="archive.html">Archiv</a>
+                        </li>
+
+                    <li class="nav-item active mr-3">
+                        <a class="nav-link" href="history.html">Chronik</a>
+                    </li>
+
+
+
+
+                </ul>
+            </div><!-- end column 2 -->
+
+            <!-- ===== COLUMN 3: Almanac ===== -->
+                    <ul class="navbar-nav nav-flex-icons flex-shrink-0 ml-3" style="line-height: 1.5; padding-top: .25rem;">
+                        <li class="nav-item mr-4 text-white">
+                            <i class="wi wi-sunrise mr-1" style="opacity: .75"></i> <span id="alm-sun-rise">04:45</span> <br>
+                            <i class="wi wi-sunset mr-1" style="opacity: .75"></i> <span id="alm-sun-set">17:14</span>
+                        </li>
+                        <li class="nav-item mr-4 text-white" style="line-height: 1.5">
+                            <i class="wi wi-moonrise mr-1" style="opacity: .75"></i> <span id="alm-moon-rise">13:38</span> <br>
+                            <i class="wi wi-moonset mr-1" style="opacity: .75"></i> <span id="alm-moon-set">19:59</span>
+                        </li>
+                        <li class="nav-item mr-2 text-white text-center" style="line-height: 1.5">
+                            <span id="alm-moon-phase" title="Halbmond" data-toggle="tooltip" data-html="true">
+                                <span id="alm-moon-icon">
+                                <i class="wi wi-moon-first-quarter mr-1" style="opacity: .75"></i>
+                                </span>
+                                <span id="alm-moon-fullness">48</span>%
+                            </span><br>
+                            <a href="almanac.html" class="text-white" style="opacity: .6">
+                                Mehr
+                            </a>
+                        </li>
+                    </ul>
+
+        </nav>
+
+    </header>
+        <main>
+
+            <div class="container">
+
+                <div class="row my-4 align-content-start">
+
+                    <div class="col-12 mb-4 text-center">
+                        <h2 class="h2-responsive text-dark">Wetterstatistiken</h2>
+                    </div>
+
+                    <div class="col-sm mb-4 text-center">
+                        <div class="card" style="overflow-x: auto;white-space: nowrap;">
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Tiefsttemperatur</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">°C</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#02e3ea; color:#000000">-1.1</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Durchschnittstemperatur</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">°C</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#2bf207; color:#000000">10.6</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Höchsttemperatur</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">°C</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#e9f70a; color:#000000">21.1</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Sommertage</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">Days</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">0</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Tropische Tage</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">Days</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">0</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Tropische Nächte</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">Days</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">0</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                            <div class="card card-body">
+                                <h4 class="h5-responsive indigo-text"><i class="wi wi-thermometer"></i>
+                                Arktische Tage</h4>
+                                <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">Days</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">0</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                            </div>
+
+                                <div class="card card-body">
+                                    <h4 class="h5-responsive indigo-text"><i class="wi wi-showers"></i>
+                                    Regen</h4>
+                                    <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head"> cm</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#e9f2f7; color:#000000">0.51</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                                </div>
+
+                                <div class="card card-body">
+                                    <h4 class="h5-responsive indigo-text"><i class="wi wi-showers"></i>
+                                    Regentage (> 0.2mm)</h4>
+                                    <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head">Days</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#e9f2f7; color:#000000">1</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                                </div>
+
+                                <div class="card card-body">
+                                    <h4 class="h5-responsive indigo-text"><i class="wi wi-strong-wind"></i>
+                                    Maximale Windgeschwindigkeit</h4>
+                                    <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head"> km/h</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#f6e8f5; color:#000000">18</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                                </div>
+
+                                <div class="card card-body">
+                                    <h4 class="h5-responsive indigo-text"><i class="wi wi-strong-wind"></i>
+                                    Durchschnittliche Windgeschwindigkeit</h4>
+                                    <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head"> km/h</th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#ca75c2; color:#000000">6</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                                </div>
+
+                                <div class="card card-body">
+                                    <h4 class="h5-responsive indigo-text"><i class="wi wi-day-sunny"></i>
+                                    Maximaler UV Index</h4>
+                                    <table class="table historyTable text-center">
+    <thead><tr>
+        <th class="head"></th>
+        <th class="month">Jan</th>
+        <th class="month">Feb</th>
+        <th class="month">Mar</th>
+        <th class="month">Apr</th>
+        <th class="month">May</th>
+        <th class="month">Jun</th>
+        <th class="month">Jul</th>
+        <th class="month">Aug</th>
+        <th class="month">Sep</th>
+        <th class="month">Oct</th>
+        <th class="month">Nov</th>
+        <th class="month">Dec</th>
+    </tr></thead><tbody>
+        <tr>
+            <th class="head">2026</th>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month" style="background-color:#fc4d0d; color:#000000">14.0</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+            <td class=" month">-</td>
+        </tr>
+</tbody></table>
+
+                                </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-4 text-center">
+                        <h2 class="h2-responsive text-dark">Rekorde dieses Jahres</h2>
+                    </div>
+
+                    <div class="col-sm mb-4 text-center">
+                        <div class="card">
+
+                            <div class="card-body" style="text-align:left;width:100%;">
+                                <table class="table text-left records" style="width:100%;">
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-thermometer"></i>
+                                            Außentemperatur</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">21,1°C</td>
+                                            <td style="font-size:16px;">18.09.2026 08:21</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">-1,1°C</td>
+                                            <td style="font-size:16px;">17.09.2026 20:21</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-windy"></i>
+                                            gefühlte Temperatur</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">18,8°C</td>
+                                            <td style="font-size:16px;">18.09.2026 07:47</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">-3,7°C</td>
+                                            <td style="font-size:16px;">17.09.2026 20:26</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-humidity"></i>
+                                            Luftfeuchte</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">80%</td>
+                                            <td style="font-size:16px;">17.09.2026 17:22</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">25%</td>
+                                            <td style="font-size:16px;">18.09.2026 14:04</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-barometer"></i>
+                                            Luftdruck</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">1053,2 mbar</td>
+                                            <td style="font-size:16px;">17.09.2026 17:22</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">990,6 mbar</td>
+                                            <td style="font-size:16px;">18.09.2026 14:04</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-strong-wind"></i>
+                                            Wind</th>
+                                        </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Windgeschwindigkeit</td>
+                                                <td style="font-size:16px;">15 km/h</td>
+                                                <td style="font-size:16px;">18.09.2026 14:05</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Böen-Geschwindigkeit</td>
+                                                <td style="font-size:16px;">18 km/h</td>
+                                                <td style="font-size:16px;">18.09.2026 14:04</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Längste Distanz Windverlauf</td>
+                                                <td style="font-size:16px;">1,2 km</td>
+                                                <td style="font-size:16px;">18.09.2026 14:05</td>
+                                            </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-umbrella"></i>
+                                            Regen</th>
+                                        </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstmenge Regen</td>
+                                                <td style="font-size:16px;">0,51 cm</td>
+                                                <td style="font-size:16px;">18.09.2026 00:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Regen-Rate</td>
+                                                <td style="font-size:16px;">0,20 cm/h</td>
+                                                <td style="font-size:16px;">18.09.2026 00:15</td>
+                                            </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-sunny"></i>
+                                            UV-Index</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">14,0</td>
+                                            <td style="font-size:16px;">18.09.2026 12:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-sunny"></i>
+                                            Sonnenstrahlung</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">1000 W/m²</td>
+                                            <td style="font-size:16px;">18.09.2026 12:00</td>
+                                        </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 mb-4 text-center">
+                        <h2 class="h2-responsive text-dark">Allzeit Rekorde</h2>
+                    </div>
+
+                    <div class="col-sm mb-4 text-center">
+                        <div class="card">
+
+                            <div class="card-body" style="text-align:left;width:100%;">
+                                <table class="table text-left records" style="width:100%;">
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-thermometer"></i>
+                                            Außentemperatur</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">21,1°C</td>
+                                            <td style="font-size:16px;">18.09.2026 08:21</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">-1,1°C</td>
+                                            <td style="font-size:16px;">17.09.2026 20:21</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-windy"></i>
+                                            gefühlte Temperatur</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">18,8°C</td>
+                                            <td style="font-size:16px;">18.09.2026 07:47</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">-3,7°C</td>
+                                            <td style="font-size:16px;">17.09.2026 20:26</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-humidity"></i>
+                                            Luftfeuchte</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">80%</td>
+                                            <td style="font-size:16px;">17.09.2026 17:22</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">25%</td>
+                                            <td style="font-size:16px;">18.09.2026 14:04</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-barometer"></i>
+                                            Luftdruck</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">1053,2 mbar</td>
+                                            <td style="font-size:16px;">17.09.2026 17:22</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Tiefstwert</td>
+                                            <td style="font-size:16px;">990,6 mbar</td>
+                                            <td style="font-size:16px;">18.09.2026 14:04</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-strong-wind"></i>
+                                            Wind</th>
+                                        </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Windgeschwindigkeit</td>
+                                                <td style="font-size:16px;">15 km/h</td>
+                                                <td style="font-size:16px;">18.09.2026 14:05</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Böen-Geschwindigkeit</td>
+                                                <td style="font-size:16px;">18 km/h</td>
+                                                <td style="font-size:16px;">18.09.2026 14:04</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Längste Distanz Windverlauf</td>
+                                                <td style="font-size:16px;">1,2 km</td>
+                                                <td style="font-size:16px;">18.09.2026 14:05</td>
+                                            </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-umbrella"></i>
+                                            Regen</th>
+                                        </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstmenge Regen</td>
+                                                <td style="font-size:16px;">0,51 cm</td>
+                                                <td style="font-size:16px;">18.09.2026 00:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;">Höchstwert Regen-Rate</td>
+                                                <td style="font-size:16px;">0,20 cm/h</td>
+                                                <td style="font-size:16px;">18.09.2026 00:15</td>
+                                            </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-sunny"></i>
+                                            UV-Index</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">14,0</td>
+                                            <td style="font-size:16px;">18.09.2026 12:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="indigo-text" style="text-align:left;font-size:20px;"><i class="wi wi-day-sunny"></i>
+                                            Sonnenstrahlung</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:16px;">Höchstwert</td>
+                                            <td style="font-size:16px;">1000 W/m²</td>
+                                            <td style="font-size:16px;">18.09.2026 12:00</td>
+                                        </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+<footer class="page-footer font-small indigo pt-4">
+
+    <div class="container-fluid text-center text-md-left mb-4">
+
+        <div class="row">
+
+            <div class="col-md-5 mt-md-0 mt-3">
+
+                <h5 class="text-uppercase">Über</h5>
+
+                <table class="d-inline">
+                    <tr>
+                        <td>Hardware:</td>
+                        <td>Simulator</td>
+                    </tr>
+                    <tr>
+                        <td>Höhe:</td>
+                        <td>84 Meter</td>
+                    </tr>
+                </table>
+
+                    <p>Vaisala WXT520</p>
+
+            </div>
+
+            <hr class="clearfix w-100 d-md-none pb-3">
+
+            <div class="col-md-4 mb-md-0 mb-3">
+
+
+            </div>
+
+            <div class="col-md-3 mb-md-0 mb-3">
+
+                <h5 class="text-uppercase">Links</h5>
+
+                <ul class="list-unstyled">
+                        <li>
+                            <a href="https://www.ighamspirit.de" target="_blank" rel="noopener">IG HamSpirit e.V.</a>
+                        </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-copyright text-center py-3">
+        &copy; <span id="footer-year">2026</span> DM0IGH Wetterstation
+
+            <span class="mx-2">&bull;</span>
+            Powered by <a href="https://weewx.com" target="_blank">weewx</a>
+                v<span id="footer-weewx-version">5.5.0</span>
+
+            <span class="mx-2">&bull;</span>
+            <a href="https://github.com/seehase/neowx-material" target="_blank">Fork of NeoWX Material</a> skin
+
+                v<span id="footer-skin-version">1.73.2</span>
+
+            <span class="mx-2">&bull;</span>
+            <a href="https://www.ighamspirit.de/Verein/Impressum" target="_blank">Impressum</a>
+            <span class="mx-2">&bull;</span>
+            <a href="https://www.ighamspirit.de/Verein/Datenschutz" target="_blank">Datenschutz</a>
+            <div class="text-center px-2">
+                Weather forecast data provided by&nbsp;<a href="https://open-meteo.com/">Open-Meteo.com</a> under (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>) license. Data may be modified (e.g., unit conversion, aggregation).
+            </div>
+
+    </div>
+
+</footer>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/mdb.min.js"></script>
+    <script src="js/vendor/moment-with-locales.min.js"></script>
+    <script type="text/javascript">moment.locale('de')</script>
+<script src="js/vendor/apexcharts/apexcharts.min.js"></script>
+<script type="text/javascript" src="js/neowx-date-format.js?v=1.73.2"></script>
+<script type="text/javascript" src="js/app.js?v=1.73.2"></script>
+<script type="text/javascript" src="js/neowx-live.js?v=1.73.2"></script>
+
+<script type="text/javascript">
+    // Show/update status label only if configured threshold > 0 in skin.conf
+    const showOfflineLabel = "history" === "current"; // Show offline-state only on current page
+    if (showOfflineLabel && 15 > 0) {
+        let lastUpdateTimestampString = '1789740300';
+        if (lastUpdateTimestampString === "" ) {
+            lastUpdateTimestampString = "4891363200"; // Fallback to 01.01.2125 if not available
+        }
+        const lastUpdateTimestamp =  Number(lastUpdateTimestampString) ;  // in seconds
+        const nowTimestamp = new Date() / 1000;             // now in seconds
+        const diffMinutes = (nowTimestamp - lastUpdateTimestamp) / 60; // Difference in minutes
+
+        const statusLabel = document.getElementById("status-label");
+        if (statusLabel && diffMinutes > 15) {
+            statusLabel.textContent = "OFFLINE";
+            statusLabel.style.display = 'inline-block';
+        }
+    }
+</script>
+
+
+
+
+
+<script type="text/javascript">
+    window.NEOWX_TEXTS = {
+        close: "Schließen",
+        // Used when app.js builds the expand button itself, in "separate" mode.
+        expand_chart: "Diagramm vergrößern"
+    };
+
+    // Where a chart's buttons go: chart_default / separate / align. Read
+    // lazily, at mount time - see neowxChartToolbarMode in js/app.js.
+    window.NEOWX_CHART_TOOLBAR = "chart_default";
+
+    // Card headings are <h5 class="h5-responsive indigo-text">. The
+    // pop-up builds its title in JS, so it is given the same classes from here
+    // rather than hard-coded ones - the colour follows [Extras] color in
+    // skin.conf and would otherwise drift on any theme but the default.
+    window.NEOWX_TITLE_CLASS = "h5-responsive indigo-text";
+</script>
+
+<script type="text/javascript">
+    // Charts drawn in "align" mode (the only ones with xaxis.min+max set) keep
+    // their calendar alignment through a zoom: record their original aligned
+    // axis at mount, re-snap on zoom, and restore the original on reset zoom.
+    // fixed/auto charts are left alone. Granularity follows the zoom width,
+    // same as graph_align_axis.inc server-side: hour tier (<=2 days), day tier
+    // (<=62 days), else even spacing.
+    var NEOWX_ALIGNED = {};
+    function neowxMountedHandler(chartContext) {
+        try {
+            var x = chartContext.w.config.xaxis;
+            if (x && x.min != null && x.max != null) {
+                NEOWX_ALIGNED[chartContext.w.globals.chartID] =
+                    { min: x.min, max: x.max, tickAmount: x.tickAmount };
+            }
+        } catch (e) {}
+        // Puts the chart's buttons where chart_toolbar asks for them. Lives
+        // in js/app.js, which is loaded above.
+        neowxSetupChartToolbar(chartContext);
+    }
+    function neowxAlignAxis(minMs, maxMs) {
+        var secs = (maxMs - minMs) / 1000;
+        if (secs < 3600) { secs = 3600; }
+        if (secs <= 172800) {
+            var hours = Math.ceil(secs / 3600);
+            var hs = Math.max(1, Math.round(hours / 6));
+            var ht = Math.ceil(hours / hs);
+            var h0 = moment(minMs).startOf('hour');
+            return { min: h0.valueOf(), max: h0.clone().add(ht * hs, 'hours').valueOf(), tickAmount: ht };
+        }
+        var days = Math.ceil(secs / 86400);
+        if (days <= 62) {
+            var ds = Math.max(1, Math.round(days / 12));
+            var dt = Math.ceil(days / ds);
+            var d0 = moment(minMs).startOf('day');
+            return { min: d0.valueOf(), max: d0.clone().add(dt * ds, 'days').valueOf(), tickAmount: dt };
+        }
+        return { min: minMs, max: maxMs, tickAmount: 12 };
+    }
+    var _neowxZooming = false;
+    var _neowxResetting = false;
+    function neowxZoomHandler(chartContext, opts) {
+        if (_neowxZooming || _neowxResetting) { return; }
+        try { if (!NEOWX_ALIGNED[chartContext.w.globals.chartID]) { return; } } catch (e) { return; }
+        if (!opts || !opts.xaxis || opts.xaxis.min == null || opts.xaxis.max == null) { return; }
+        var a = neowxAlignAxis(opts.xaxis.min, opts.xaxis.max);
+        _neowxZooming = true;
+        try {
+            var p = chartContext.updateOptions(
+                { xaxis: { min: a.min, max: a.max, tickAmount: a.tickAmount } }, false, false);
+            if (p && p.then) { p.then(function(){ _neowxZooming = false; }, function(){ _neowxZooming = false; }); }
+            else { _neowxZooming = false; }
+        } catch (e) { _neowxZooming = false; }
+    }
+    function neowxResetDone() { _neowxZooming = false; _neowxResetting = false; }
+    function neowxBeforeResetHandler(chartContext) {
+        // Restore the ORIGINAL aligned min/max/tickAmount captured at mount. beforeResetZoom only
+        // positions min/max, so re-apply the exact tickAmount right after via updateOptions.
+        try {
+            var o = NEOWX_ALIGNED[chartContext.w.globals.chartID];
+            if (!o) { return; }
+            _neowxResetting = true;
+            setTimeout(function() {
+                try {
+                    _neowxZooming = true;
+                    var p = chartContext.updateOptions(
+                        { xaxis: { min: o.min, max: o.max, tickAmount: o.tickAmount } }, false, false);
+                    if (p && p.then) { p.then(neowxResetDone, neowxResetDone); }
+                    else { neowxResetDone(); }
+                } catch (e) { neowxResetDone(); }
+            }, 0);
+            return { xaxis: { min: o.min, max: o.max } };
+        } catch (e) {}
+    }
+
+    var config_mode = 'auto';
+    var theme_mode = 'light';
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme_mode = 'dark';
+    }
+    // Override mode by config
+    if(config_mode != "auto") {
+        theme_mode = config_mode;
+    }
+
+    window.Apex = {
+        theme: {
+            mode: theme_mode,
+            palette: 'palette1'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2
+        },
+        markers: {
+            size: 0,
+        },
+        chart: {
+            height: 300,
+            stacked: false,
+            background: theme_mode === 'dark' ? '#444' : '#ffffff',
+            zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true,
+                allowMouseWheelZoom: false,
+            },
+            toolbar: {
+                autoSelected: 'zoom',
+                // Opens a copy of the chart in a pop-up window. Set as a global
+                // default so every chart gets the button; neowxChartPopup and
+                // the icon both live in js/app.js, which is loaded above. In
+                // "separate" mode app.js puts this button in the card's corner
+                // instead, so it is left out of the toolbar here.
+                tools: {
+                    customIcons: [{
+                        icon: NEOWX_EXPAND_ICON,
+                        title: "Diagramm vergrößern",
+                        class: 'neowx-chart-popup-icon',
+                        click: neowxChartPopup
+                    }]
+                },
+                export: {
+                    csv: {
+                        headerCategory: 'DateTime',
+                        categoryFormatter(x) {
+                            return new Date(x).getTime()
+                        }
+                    }
+                }
+            },
+            locales: [
+{
+  "name": "de",
+  "options": {
+    "months": [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ],
+    "shortMonths": [
+      "Jan",
+      "Feb",
+      "Mär",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dez"
+    ],
+    "days": [
+      "Sonntag",
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag"
+    ],
+    "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "toolbar": {
+      "exportToSVG": "SVG speichern",
+      "exportToPNG": "PNG speichern",
+      "exportToCSV": "CSV speichern",
+      "menu": "Menü",
+      "selection": "Auswahl",
+      "selectionZoom": "Auswahl vergrößern",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "pan": "Verschieben",
+      "reset": "Zoom zurücksetzen"
+    }
+  }
+}
+            ],
+            defaultLocale: 'de',
+            animations: {
+                enabled: false
+            },
+            events: {
+                mounted: neowxMountedHandler,
+                // ApexCharts rebuilds the toolbar on a re-render, so the
+                // rebuilt one has to be put back where chart_toolbar asks for
+                // it. (A heading that changes height is covered separately, by
+                // the resize listener and ResizeObserver in js/app.js.)
+                updated: neowxSetupChartToolbar,
+                zoomed: neowxZoomHandler,
+                beforeResetZoom: neowxBeforeResetHandler
+            },
+        },
+    }
+
+    // --- neowxChartColors ---------------------------------------------------
+    // Resolves skin.conf per-series color references into concrete colors.
+    // Accepted per entry: "N" (Nth color of the ACTIVE palette, 1-based),
+    // "paletteN:M" (Mth color of built-in palette N), a literal CSS color,
+    // or "default" (keep the active palette's positional color).
+    // Palette tables mirror getThemePalettes() in
+    // js/vendor/apexcharts/apexcharts.js - keep in sync when upgrading the
+    // vendored ApexCharts build.
+    var NEOWX_PALETTES = {
+        palette1: ["#008FFB", "#00A86F", "#CA8501", "#FF4560", "#846DD5"],
+        palette2: ["#6978CB", "#039DE2", "#49A84D", "#B39105", "#D68000"],
+        palette3: ["#209FCC", "#648291", "#D4526E", "#0FA783", "#A19285"],
+        palette4: ["#2FA59D", "#73A20B", "#099DE1", "#FD5D5D", "#648291"],
+        palette5: ["#2B908F", "#F56566", "#2EAB16", "#FA4443", "#1EA2BD"],
+        palette6: ["#449DD1", "#F86624", "#EA3A4A", "#9C63D1", "#899E2A"],
+        palette7: ["#DF475B", "#1B998B", "#7E75B7", "#F46036", "#B1911B"],
+        palette8: ["#9C63D1", "#F86624", "#B38F04", "#EA3A4A", "#2FA2B3"],
+        palette9: ["#98776F", "#A19285", "#A8705E", "#BA6560", "#A0927F"],
+        palette10: ["#C91EFF", "#A94BFD", "#6C6AFE", "#2983FF", "#009ED8"]
+    };
+
+    // ref must be a string (callers pass String(...).trim()).
+    function neowxResolveColorRef(ref, activePalette, fallback, chartName) {
+        if (!ref || ref.toLowerCase() === 'default') { return fallback; }
+        if (/^\d+$/.test(ref)) {
+            var n = parseInt(ref, 10);
+            if (n >= 1 && n <= activePalette.length) { return activePalette[n - 1]; }
+            console.warn('neowx-material: chart "' + chartName + '": color slot ' + ref +
+                ' out of range (1-' + activePalette.length + ') - using default');
+            return fallback;
+        }
+        // No CSS color syntax contains ':', so this never shadows a literal color.
+        if (ref.indexOf(':') !== -1) {
+            var m = /^palette(\d+):(\d+)$/i.exec(ref);
+            var pal = m ? NEOWX_PALETTES['palette' + m[1]] : null;
+            var slot = m ? parseInt(m[2], 10) : 0;
+            if (pal && slot >= 1 && slot <= pal.length) { return pal[slot - 1]; }
+            if (pal) {
+                console.warn('neowx-material: chart "' + chartName + '": color slot ' + m[2] +
+                    ' out of range (1-' + pal.length + ') - using default');
+            } else {
+                console.warn('neowx-material: chart "' + chartName + '": unrecognized palette reference "' +
+                    ref + '" - using default');
+            }
+            return fallback;
+        }
+        if (typeof CSS !== 'undefined' && CSS.supports && !CSS.supports('color', ref)) {
+            console.warn('neowx-material: chart "' + chartName + '": invalid color "' +
+                ref + '" - using default');
+            return fallback;
+        }
+        return ref;
+    }
+
+    function neowxChartColors(refs, seriesCount, chartName) {
+        var active = NEOWX_PALETTES.palette1;
+        try {
+            var palName = window.Apex.theme.palette;
+            if (NEOWX_PALETTES[palName]) { active = NEOWX_PALETTES[palName]; }
+        } catch (e) {}
+        var out = [];
+        for (var i = 0; i < seriesCount; i++) {
+            var fallback = active[i % active.length];
+            var ref = (refs && i < refs.length && refs[i] != null) ? String(refs[i]).trim() : '';
+            out.push(neowxResolveColorRef(ref, active, fallback, chartName));
+        }
+        return out;
+    }
+    // --- end neowxChartColors -----------------------------------------------
+
+    function getOrdinalDirection(degrees) {
+        var sectors = [
+            'N',
+            'NO',
+            'O',
+            'SO',
+            'S',
+            'SW',
+            'W',
+            'NW'
+        ];
+        var index = Math.round(degrees / (360 / sectors.length));
+        return sectors[index % sectors.length];
+    }
+</script>
+
+    </body>
+</html>
