@@ -1,0 +1,43 @@
+MONTHLY CLIMATOLOGICAL SUMMARY for Sep 2026
+
+NAME: DM0IGH, Berlin-Neukölln, Rollberg
+    ELEV: 84 Meter    LAT: 52-28.70 N    LONG: 013-25.25 O
+
+TEMPERATURE (°C), RAIN (cm), WIND SPEED (km/h)
+
+                                         HEAT   COOL         AVG
+             MEAN                        DEG    DEG          WIND
+DAY   TEMP   HIGH   TIME    LOW   TIME   DAYS   DAYS   RAIN  SPEED   HIGH   TIME    DIR
+---------------------------------------------------------------------------------------
+ 01
+ 02
+ 03
+ 04
+ 05
+ 06
+ 07
+ 08
+ 09
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29   25,1   25,2  16:02   25,1  15:59    0,0    6,8   0,00    N/A    N/A    N/A    N/A
+ 30
+---------------------------------------------------------------------------------------
+  25,1   25,2     29   25,1     29    0,0    6,8   0,00    N/A    N/A       N/A    N/A

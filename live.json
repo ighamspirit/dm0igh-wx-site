@@ -1,0 +1,31 @@
+{
+    "today": "2026-09-29",
+    "date": "29.09.2026",
+    "year": "2026",
+    "generated": "2026-09-29T16:19:38",
+    "versions": {
+        "weewx": "5.5.0",
+        "skin": "1.73.2"
+    },
+    "uptime": {
+        "station": "0 Tage, 0 Stunden, 0 Minuten",
+        "server": "0 Tage, 0 Stunden, 38 Minuten"
+    },
+    "almanac": {
+        "hasExtras": true,
+        "sunrise": "05:03",
+        "sunset": "16:48",
+        "sun": {
+            "rise": "05:03",
+            "set": "16:48"
+        },
+        "moon": {
+            "rise": "17:17",
+            "set": "08:50"
+        },
+        "moon_phase": "abnehmend",
+        "moon_index": 5,
+        "moon_fullness": "89"
+
+    }
+}

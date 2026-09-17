@@ -1,0 +1,17 @@
+{
+  "station": "DM0IGH",
+  "time": 1790698200,
+  "time_iso": "2026-09-29T16:10:00+0000",
+  "outTemp_C": 25.192452830188834,
+  "outHumidity_pct": 39.27132075471688,
+  "barometer_hPa": 1027.4846331462911,
+  "pressure_hPa": 1017.6460377358542,
+  "windSpeed_ms": ,
+  "windGust_ms": ,
+  "windDir_deg": ,
+  "rainRate_mmh": 0.0,
+  "rain_today_mm": 0.0,
+  "ptuInternal_C": 25.464905660377365,
+  "outTemp_today_min_C": 25.1,
+  "outTemp_today_max_C": 25.2
+}
